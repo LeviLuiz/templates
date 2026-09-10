@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-campo="nome">Restaurante</title>
+    <style>
+        :root { --bg:#1c1410; --ink:#f6efe6; --accent:#e25b2a; --card:#2a1f19; }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:Georgia,serif; background:var(--bg); color:var(--ink); }
+        header { padding:24px 8%; display:flex; justify-content:space-between; align-items:center; }
+        .hero { min-height:52vh; padding:50px 8%; background:linear-gradient(180deg,#3a2418,#1c1410); }
+        h1 { font-size:52px; margin:8px 0 18px; max-width:700px; }
+        .btn { background:var(--accent); color:white; text-decoration:none; padding:14px 22px; border-radius:6px; font-family:Arial,sans-serif; font-weight:700; }
+        .faixa { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:#3a2a22; }
+        .faixa div { background:var(--card); padding:24px 8%; }
+        footer { padding:36px 8% 50px; font-family:Arial,sans-serif; }
+        @media (max-width:800px){ .faixa{grid-template-columns:1fr;} h1{font-size:34px;} }
+    </style>
+</head>
+<body data-categoria="Restaurante" data-frase="Comida caseira, mesa pronta.">
+    <header>
+        <strong data-campo="nome">Restaurante</strong>
+        <a class="btn" data-whatsapp target="_blank">Reservar mesa</a>
+    </header>
+    <section class="hero">
+        <p data-campo="categoria">Restaurante</p>
+        <h1 data-campo="frase">Comida caseira, mesa pronta.</h1>
+        <p data-campo="horario">Horário</p>
+    </section>
+    <section class="faixa">
+        <div><h3>Almoço</h3><p>Prato feito e opções do dia.</p></div>
+        <div><h3>Família</h3><p>Espaço para domingo e aniversário.</p></div>
+        <div>
+            <h3>Onde estamos</h3>
+            <p data-campo="endereco">Endereço</p>
+            <a data-mapa style="color:#e25b2a" target="_blank">Abrir mapa</a>
+        </div>
+    </section>
+    <footer>
+        <a class="btn" data-whatsapp target="_blank">Contatar pelo WhatsApp</a>
+        <p><a data-tel style="color:#e25b2a"></a></p>
+    </footer>
+    <script src="_base.js"></script>
+</body>
+</html>

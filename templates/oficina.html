@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-campo="nome">Oficina</title>
+    <style>
+        :root { --bg:#101216; --ink:#e8edf3; --accent:#f5b942; --card:#1b2027; }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:Arial,Helvetica,sans-serif; background:var(--bg); color:var(--ink); }
+        header { padding:24px 8%; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #2a313c; }
+        .logo { font-weight:800; letter-spacing:.04em; text-transform:uppercase; }
+        .hero { padding:56px 8%; }
+        h1 { font-size:46px; margin:8px 0 16px; max-width:640px; }
+        .btn { background:var(--accent); color:#111; text-decoration:none; padding:14px 22px; border-radius:8px; font-weight:800; }
+        .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; padding:0 8% 50px; }
+        .item { background:var(--card); padding:22px; border-radius:12px; }
+        footer { padding:20px 8% 48px; color:#9aa6b5; }
+        @media (max-width:800px){ .grid{grid-template-columns:1fr;} h1{font-size:34px;} }
+    </style>
+</head>
+<body data-categoria="Oficina" data-frase="Diagnóstico rápido e serviço honesto.">
+    <header>
+        <div class="logo" data-campo="nome">Oficina</div>
+        <a class="btn" data-whatsapp target="_blank">Pedir orçamento</a>
+    </header>
+    <section class="hero">
+        <p data-campo="categoria">Oficina</p>
+        <h1 data-campo="frase">Diagnóstico rápido e serviço honesto.</h1>
+        <p data-campo="endereco">Endereço</p>
+        <p data-campo="horario">Horário</p>
+        <p><a data-mapa style="color:#f5b942" target="_blank">Como chegar</a></p>
+    </section>
+    <section class="grid">
+        <div class="item"><h3>Revisão</h3><p>Preventiva para não te deixar na rua.</p></div>
+        <div class="item"><h3>Freios e suspensão</h3><p>Segurança primeiro, orçamento claro.</p></div>
+        <div class="item"><h3>Elétrica</h3><p>Bateria, partida e diagnóstico.</p></div>
+    </section>
+    <footer>
+        <a class="btn" data-whatsapp target="_blank">WhatsApp da oficina</a>
+        <p><a data-tel style="color:#f5b942"></a></p>
+    </footer>
+    <script src="_base.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-campo="nome">Loja</title>
+    <style>
+        :root { --bg:#f3f6fb; --ink:#102033; --accent:#2d6cdf; --card:#fff; }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:Arial,Helvetica,sans-serif; background:var(--bg); color:var(--ink); }
+        header { padding:22px 8%; background:white; display:flex; justify-content:space-between; align-items:center; }
+        .hero { padding:48px 8%; display:grid; grid-template-columns:1.1fr .9fr; gap:24px; }
+        h1 { font-size:42px; margin:0 0 12px; }
+        .card { background:var(--card); border-radius:16px; padding:24px; box-shadow:0 8px 24px rgba(16,32,51,.06); }
+        .btn { background:var(--accent); color:white; text-decoration:none; padding:13px 20px; border-radius:10px; font-weight:700; }
+        .lista { padding:0 8% 40px; display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+        .lista div { background:white; padding:20px; border-radius:14px; }
+        footer { padding:20px 8% 48px; }
+        @media (max-width:800px){ .hero,.lista{grid-template-columns:1fr;} h1{font-size:32px;} }
+    </style>
+</head>
+<body data-categoria="Loja" data-frase="Encontre o que precisa e chame no WhatsApp.">
+    <header>
+        <strong data-campo="nome">Loja</strong>
+        <a class="btn" data-whatsapp target="_blank">Falar com a loja</a>
+    </header>
+    <section class="hero">
+        <div>
+            <h1 data-campo="frase">Encontre o que precisa e chame no WhatsApp.</h1>
+            <p>Quem é você, onde fica e como comprar.</p>
+        </div>
+        <div class="card">
+            <h2 data-campo="nome"></h2>
+            <p data-campo="endereco" id="endereco">Endereço</p>
+            <p data-campo="horario">Horário</p>
+            <p><a data-mapa target="_blank">Como chegar</a></p>
+        </div>
+    </section>
+    <section class="lista">
+        <div><h3>Atendimento</h3><p>Tire dúvida e peça pelo WhatsApp.</p></div>
+        <div><h3>Retirada</h3><p>Combine horário e retire na loja.</p></div>
+    </section>
+    <footer>
+        <a class="btn" data-whatsapp target="_blank">WhatsApp</a>
+        <p><a data-tel></a></p>
+    </footer>
+    <script src="_base.js"></script>
+</body>
+</html>
