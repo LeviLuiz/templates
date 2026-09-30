@@ -9,6 +9,7 @@ const empSite = document.getElementById("emp-site");
 const mensagemEl = document.getElementById("mensagem");
 const botaoGerar = document.getElementById("gerar");
 const botaoWhatsApp = document.getElementById("whatsapp");
+const botaoPreview = document.getElementById("visualizar-template");
 const botaoProxima = document.getElementById("proxima");
 
 let empresa = null;
@@ -53,6 +54,44 @@ function numeroWhatsApp(item) {
     return item.celular || item.whatsapp || item.telefoneNormalizado || null;
 }
 
+function normalizarTexto(valor) {
+    return String(valor || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+}
+
+function escolherTemplate(item) {
+    const termo = normalizarTexto(`${item.segmento || ""} ${item.categoria || ""}`);
+    if (/padaria|bakery|confeitaria|pastry/.test(termo)) return "padaria.html";
+    if (/salao|barbearia|hairdresser|beauty/.test(termo)) return "salao.html";
+    if (/oficina|mecanica|autopecas|car_repair|motorcycle_repair|car_parts/.test(termo)) return "oficina.html";
+    if (/restaurante|lanchonete|cafe|bar|restaurant|fast_food|pub/.test(termo)) return "restaurante.html";
+    return "loja.html";
+}
+
+function linkDemonstracao(item) {
+    const parametros = new URLSearchParams();
+    const telefone = numeroWhatsApp(item);
+
+    parametros.set("nome", item.nome || "Seu negócio");
+    parametros.set("categoria", item.segmento || item.categoria || "Comércio");
+    if (item.endereco && item.endereco !== "Endereço não informado") {
+        parametros.set("endereco", item.endereco);
+    }
+    if (telefone) {
+        parametros.set("telefone", item.telefone || telefone);
+        parametros.set("whatsapp", telefone);
+    }
+
+    const url = new URL(
+        `templates/${escolherTemplate(item)}`,
+        "https://leviluiz.github.io/templates/",
+    );
+    url.search = parametros.toString();
+    return url.toString();
+}
+
 function montarMensagem(item) {
     const onde =
         item.endereco && item.endereco !== "Endereço não informado"
@@ -64,6 +103,10 @@ function montarMensagem(item) {
         `Faço site simples para comércio: horário, fotos, mapa e botão de WhatsApp. ` +
         `Quer que eu te mostre um exemplo de 1 página?`
     );
+}
+
+function mensagemComLink(item) {
+    return `${montarMensagem(item)}\n\nExemplo de site: ${linkDemonstracao(item)}`;
 }
 
 function preencherEmpresa(item) {
@@ -119,9 +162,10 @@ function preencherEmpresa(item) {
     }
 
     if (mensagemEl) {
-        mensagemEl.value = montarMensagem(item);
+        mensagemEl.value = mensagemComLink(item);
     }
     setDisabled(botaoWhatsApp, !numeroWhatsApp(item));
+    setDisabled(botaoPreview, false);
 }
 
 function carregar() {
@@ -143,6 +187,7 @@ function carregar() {
         }
         setDisabled(botaoGerar, true);
         setDisabled(botaoWhatsApp, true);
+        setDisabled(botaoPreview, true);
         setDisabled(botaoProxima, true);
         return;
     }
@@ -154,7 +199,7 @@ on(botaoGerar, "click", () => {
     if (!empresa || !mensagemEl) {
         return;
     }
-    mensagemEl.value = montarMensagem(empresa);
+    mensagemEl.value = mensagemComLink(empresa);
     setDisabled(botaoWhatsApp, !numeroWhatsApp(empresa));
 });
 
@@ -168,9 +213,14 @@ on(botaoWhatsApp, "click", () => {
         return;
     }
 
-    const texto = (mensagemEl && mensagemEl.value.trim()) || montarMensagem(empresa);
+    const texto = (mensagemEl && mensagemEl.value.trim()) || mensagemComLink(empresa);
     const url = `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
     window.open(url, "_blank", "noopener,noreferrer");
+});
+
+on(botaoPreview, "click", () => {
+    if (!empresa) return;
+    window.open(linkDemonstracao(empresa), "_blank", "noopener,noreferrer");
 });
 
 on(botaoProxima, "click", () => {
