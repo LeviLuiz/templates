@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-campo="nome">Salão</title>
+    <style>
+        :root { --bg:#f7f3ef; --ink:#2d2430; --accent:#7a4e6a; --card:#fff; }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:"Trebuchet MS",Arial,sans-serif; background:var(--bg); color:var(--ink); }
+        header { padding:26px 8%; }
+        .logo { font-size:20px; }
+        .hero { padding:20px 8% 50px; text-align:center; }
+        h1 { font-size:44px; font-weight:500; margin:10px auto 16px; max-width:640px; }
+        .btn { display:inline-block; background:var(--accent); color:white; text-decoration:none; padding:13px 24px; border-radius:999px; }
+        .grid { width:84%; margin:0 auto 50px; display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+        .item { background:var(--card); border-radius:20px; padding:24px; }
+        footer { text-align:center; padding:10px 8% 50px; }
+        @media (max-width:800px){ .grid{grid-template-columns:1fr;} h1{font-size:32px;} }
+    </style>
+</head>
+<body data-categoria="Salão" data-frase="Cabelo e barba com hora marcada.">
+    <header>
+        <div class="logo" data-campo="nome">Salão</div>
+    </header>
+    <section class="hero">
+        <p data-campo="categoria">Salão</p>
+        <h1 data-campo="frase">Cabelo e barba com hora marcada.</h1>
+        <a class="btn" data-whatsapp target="_blank">Agendar no WhatsApp</a>
+    </section>
+    <section class="grid">
+        <div class="item"><h3>Corte</h3><p>Feminino, masculino e infantil.</p></div>
+        <div class="item"><h3>Coloração</h3><p>Retoque e hidratação.</p></div>
+        <div class="item"><h3>Barba</h3><p>Acabamento rápido no intervalo.</p></div>
+    </section>
+    <footer>
+        <p data-campo="endereco">Endereço</p>
+        <p data-campo="horario">Horário</p>
+        <p><a data-mapa target="_blank">Ver localização</a></p>
+        <p><a data-tel></a></p>
+    </footer>
+    <script src="_base.js"></script>
+</body>
+</html>

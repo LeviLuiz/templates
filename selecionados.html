@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Empresas selecionadas</title>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <main class="container">
+
+        <h1>Empresas selecionadas</h1>
+
+        <p class="subtitulo">
+            Empresas escolhidas para prospecção.
+        </p>
+
+        <div id="status"></div>
+
+        <section id="selecionados"></section>
+
+        <br />
+
+        <button id="voltar" class="btn-secundario">
+            ← Voltar
+        </button>
+
+    </main>
+
+    <script>
+
+        const container =
+            document.getElementById("selecionados");
+
+        const status =
+            document.getElementById("status");
+
+        const dados =
+            localStorage.getItem("empresasSelecionadas");
+
+        if (!dados) {
+
+            status.textContent =
+                "Nenhuma empresa selecionada.";
+
+        } else {
+
+            const empresas = JSON.parse(dados);
+
+            renderizarEmpresas();
+
+            function renderizarEmpresas() {
+
+                container.innerHTML = "";
+
+                status.textContent =
+                    `${empresas.length} ${
+                        empresas.length === 1
+                            ? "empresa selecionada"
+                            : "empresas selecionadas"
+                    }.`;
+
+                if (empresas.length === 0) {
+
+                    status.textContent =
+                        "Nenhuma empresa selecionada.";
+
+                    return;
+                }
+
+                empresas.forEach((empresa, indice) => {
+
+                    if (empresa.nota < 0) {
+                        return;
+                    }
+
+                    const card =
+                        document.createElement("div");
+
+                    card.className = "card";
+
+                    // ==============================
+                    // COR DO CARD PELA NOTA
+                    // ==============================
+
+                    if (empresa.nota <= 30) {
+
+                        card.style.background =
+                            "#a5160c73";
+
+                    } else if (empresa.nota <= 60) {
+
+                        card.style.background =
+                            "#e4bb0573";
+
+                    } else {
+
+                        card.style.background =
+                            "#3ecc1273";
+                    }
+
+
+                    // ==============================
+                    // TELEFONE
+                    // ==============================
+
+                    const telefone =
+                        empresa.telefone || "";
+
+                    const numero =
+                        telefone.replace(/\D/g, "");
+
+
+                    // ==============================
+                    // CARD
+                    // ==============================
+
+                    card.innerHTML = `
+
+                        <h2>
+                            ${empresa.nome || "Nome não informado"}
+                        </h2>
+
+                        <div class="nota">
+                            Nota:
+                            ${empresa.nota ?? "Não informada"}/100
+                        </div>
+
+                        <div class="info">
+                            📍
+                            ${empresa.endereco || "Endereço não informado"}
+                        </div>
+
+                        <div class="info">
+                            📞
+                            ${empresa.telefone || "Telefone não informado"}
+                        </div>
+
+                        <div class="info">
+                            🌐
+
+                            ${
+                                empresa.site
+                                    ? `
+                                        <a
+                                            href="${empresa.site}"
+                                            target="_blank"
+                                            class="link-site"
+                                        >
+                                            ${empresa.site}
+                                        </a>
+                                      `
+                                    : "Sem site cadastrado"
+                            }
+
+                        </div>
+
+                        ${
+                            numero
+                                ? `
+                                    <div class="acoes-contato">
+
+                                        <a
+                                            href="https://wa.me/${numero}"
+                                            target="_blank"
+                                            class="btn-whatsapp"
+                                        >
+                                            💬 Tentar contato pelo WhatsApp
+                                        </a>
+
+                                        <button
+                                            class="btn-principal btn-proposta"
+                                        >
+                                            Criar proposta
+                                        </button>
+
+                                        <button
+                                            class="btn-excluir"
+                                        >
+                                            🗑 Excluir empresa
+                                        </button>
+
+                                    </div>
+                                  `
+                                : `
+                                    <div class="acoes-contato">
+
+                                        <div class="info sem-site">
+                                            📞 Telefone não disponível
+                                        </div>
+
+                                        <button
+                                            class="btn-principal btn-proposta"
+                                        >
+                                            Criar proposta
+                                        </button>
+
+                                        <button
+                                            class="btn-excluir"
+                                        >
+                                            🗑 Excluir empresa
+                                        </button>
+
+                                    </div>
+                                  `
+                        }
+
+                    `;
+
+
+                    // ==============================
+                    // CRIAR PROPOSTA
+                    // ==============================
+
+                    const botaoProposta =
+                        card.querySelector(".btn-proposta");
+
+                    botaoProposta.addEventListener(
+                        "click",
+                        () => {
+
+                            localStorage.setItem(
+                                "empresaProposta",
+                                JSON.stringify(empresa)
+                            );
+
+                            window.location.href =
+                                "proposta.html";
+                        }
+                    );
+
+
+                    // ==============================
+                    // EXCLUIR EMPRESA
+                    // ==============================
+
+                    const botaoExcluir =
+                        card.querySelector(".btn-excluir");
+
+                    botaoExcluir.addEventListener(
+                        "click",
+                        () => {
+
+                            // Remove a empresa
+                            empresas.splice(indice, 1);
+
+                            // Salva a lista atualizada
+                            localStorage.setItem(
+                                "empresasSelecionadas",
+                                JSON.stringify(empresas)
+                            );
+
+                            // Desenha os cards novamente
+                            renderizarEmpresas();
+                        }
+                    );
+
+
+                    container.appendChild(card);
+
+                });
+            }
+        }
+
+
+        // ==============================
+        // VOLTAR
+        // ==============================
+
+        document
+            .getElementById("voltar")
+            .addEventListener("click", () => {
+
+                window.location.href =
+                    "index.html";
+
+            });
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prospecção</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="container">
+        <h1>Prospecção</h1>
+        <p class="subtitulo">
+            Encontre empresas sem site e faça a triagem uma por uma.
+        </p>
+
+        <section class="busca">
+            <input
+                id="segmento"
+                type="text"
+                placeholder="Segmento (ex: padaria)"
+                autocomplete="off"
+            >
+            <input
+                id="cidade"
+                type="text"
+                placeholder="Cidade (ex: Brasília)"
+                autocomplete="off"
+            >
+            <button id="buscar" class="btn-principal" type="button">
+                Buscar empresas
+            </button>
+        </section>
+
+        <div id="status" role="status"></div>
+
+        <section id="fila">
+            <div id="contador" class="contador"></div>
+
+            <article id="empresa-atual" class="card" hidden>
+                <header class="card-topo">
+                    <h2 id="emp-nome"></h2>
+                    <span id="emp-nota" class="nota"></span>
+                </header>
+
+                <p id="emp-categoria" class="categoria"></p>
+                <p id="emp-endereco"></p>
+                <p id="emp-motivo"></p>
+                <p id="emp-contato"></p>
+                <p id="emp-site"></p>
+
+                <div id="acoes-triagem" class="acoes-triagem">
+                    <button id="nao" class="btn-nao" type="button" disabled>Não</button>
+                    <button id="sim" class="btn-sim" type="button" disabled>Talvez</button>
+                    <button id="proxima" class="btn-proximo" type="button" disabled>Próximo</button>
+                    <button id="enviar" class="btn-enviar" type="button" disabled>Enviar WhatsApp</button>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

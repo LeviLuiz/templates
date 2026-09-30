@@ -1,0 +1,338 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #0b0f19;
+    color: white;
+}
+
+.container {
+    width: 90%;
+    max-width: 720px;
+    margin: 50px auto;
+}
+
+h1 {
+    margin: 0 0 6px;
+    font-size: 36px;
+}
+
+.subtitulo {
+    margin: 0;
+    color: #999;
+    font-size: 16px;
+}
+
+.busca {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 30px 0;
+}
+
+input {
+    flex: 1;
+    padding: 14px 16px;
+    border: 1px solid #303747;
+    border-radius: 8px;
+    background: #151b28;
+    color: white;
+    font-size: 15px;
+    outline: none;
+    transition: 0.2s;
+}
+
+input::placeholder {
+    color: #777;
+}
+
+input:focus {
+    border-color: #4f8cff;
+    box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.12);
+}
+
+button {
+    padding: 14px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    opacity: 0.92;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-principal {
+    background: #4f8cff;
+    color: white;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.btn-principal:hover:not(:disabled) {
+    background: #3f7dea;
+}
+
+#status {
+    margin: 20px 0;
+    color: #aaa;
+}
+
+.contador,
+#contador {
+    margin: 20px 0 15px;
+    color: #aaa;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.card {
+    background: #151b28;
+    border: 1px solid #252d3d;
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 15px;
+}
+
+.card-topo {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.card h2 {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.3;
+}
+
+.nota {
+    display: inline-block;
+    flex-shrink: 0;
+    padding: 5px 9px;
+    border-radius: 6px;
+    background: rgba(79, 140, 255, 0.1);
+    border: 1px solid rgba(79, 140, 255, 0.2);
+    color: #6fa0ff;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.categoria {
+    margin: 0 0 12px;
+    color: #8db5ff;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.card p {
+    margin: 8px 0;
+    color: #aaa;
+    font-size: 15px;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.card a {
+    color: #8db5ff;
+    text-decoration: none;
+}
+
+.card a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+.acoes-triagem {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+
+.btn-sim,
+.btn-nao,
+.btn-enviar,
+.btn-proximo {
+    flex: 1;
+    padding: 16px 18px;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.voltar {
+    display: inline-block;
+    margin-bottom: 18px;
+    color: #8db5ff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.voltar:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+.proposta-box {
+    margin-top: 22px;
+}
+
+.proposta-box label {
+    display: block;
+    margin-bottom: 8px;
+    color: #aaa;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+textarea {
+    display: block;
+    width: 100%;
+    min-height: 200px;
+    margin: 0 0 16px;
+    padding: 15px;
+    border: 1px solid #303747;
+    border-radius: 10px;
+    resize: vertical;
+    background: #151b28;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    outline: none;
+}
+
+textarea::placeholder {
+    color: #777;
+}
+
+textarea:focus {
+    border-color: #4f8cff;
+    box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.12);
+}
+
+.acoes-proposta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.acoes-proposta button {
+    flex: 1;
+    min-width: 160px;
+}
+
+.btn-sim {
+    background: #3d4d68;
+    color: white;
+}
+
+.btn-sim:hover:not(:disabled) {
+    background: #4a5d7c;
+}
+
+.btn-nao {
+    background: #c62828;
+    color: white;
+}
+
+.btn-nao:hover:not(:disabled) {
+    background: #a91f1f;
+}
+
+.btn-enviar {
+    background: #25d366;
+    color: white;
+}
+
+.btn-enviar:hover:not(:disabled) {
+    background: #20bd5a;
+}
+
+.btn-proximo {
+    background: #151b28;
+    color: white;
+    border: 1px solid #303747;
+}
+
+.btn-proximo:hover:not(:disabled) {
+    border-color: #4f8cff;
+    background: #192231;
+}
+
+@media (max-width: 800px) {
+    .container {
+        width: 94%;
+        margin: 35px auto;
+    }
+
+    .busca {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    input,
+    .btn-principal {
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .acoes-triagem {
+        flex-direction: column;
+    }
+
+    .btn-sim,
+    .btn-nao,
+    .btn-enviar,
+    .btn-proximo,
+    .acoes-proposta button {
+        width: 100%;
+    }
+
+    .card-topo {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 500px) {
+    .container {
+        margin-top: 25px;
+    }
+
+    h1 {
+        font-size: 30px;
+    }
+
+    .subtitulo {
+        font-size: 14px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .card h2 {
+        font-size: 20px;
+    }
+}
