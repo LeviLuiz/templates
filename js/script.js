@@ -63,7 +63,8 @@ async function buscarEmpresas() {
             throw new Error(dados.erro || dados.mensagem || "Erro na busca.");
         }
 
-        empresas = (dados.empresas || []).filter((empresa) => !estaBloqueada(empresa));
+        empresas = (dados.empresas || [])
+            .filter((empresa) => !estaBloqueada(empresa));
         empresas.sort((a, b) => {
             if (b.podeEnviar !== a.podeEnviar) {
                 return Number(b.podeEnviar) - Number(a.podeEnviar);
