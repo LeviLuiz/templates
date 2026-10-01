@@ -10,9 +10,38 @@ const OVERPASS_ENDPOINTS = [
 let proximoEndpoint = 0;
 
 const SEGMENTOS = {
+    // Busca ampla para quem quer prospectar vários tipos de comércio de uma vez.
+    comercio: {
+        shop: ["*"],
+        craft: ["*"],
+        office: ["*"],
+        amenity: ["restaurant", "fast_food", "cafe", "bar", "pub", "pharmacy", "clinic", "doctors", "dentist", "veterinary", "laundry", "car_wash", "fuel"],
+        tourism: ["hotel", "guest_house"],
+        leisure: ["fitness_centre"],
+    },
+    "estabelecimentos": {
+        shop: ["*"],
+        craft: ["*"],
+        office: ["*"],
+        amenity: ["restaurant", "fast_food", "cafe", "bar", "pub", "pharmacy", "clinic", "doctors", "dentist", "veterinary", "laundry", "car_wash", "fuel"],
+        tourism: ["hotel", "guest_house"],
+        leisure: ["fitness_centre"],
+    },
+    business: {
+        shop: ["*"],
+        craft: ["*"],
+        office: ["*"],
+        amenity: ["restaurant", "fast_food", "cafe", "bar", "pub", "pharmacy", "clinic", "doctors", "dentist", "veterinary", "laundry", "car_wash", "fuel"],
+        tourism: ["hotel", "guest_house"],
+        leisure: ["fitness_centre"],
+    },
     padaria: { shop: ["bakery"] },
     confeitaria: { shop: ["bakery", "pastry", "confectionery"] },
     mercado: { shop: ["supermarket", "convenience", "greengrocer"] },
+    market: { shop: ["supermarket", "convenience", "greengrocer"] },
+    supermarket: { shop: ["supermarket"] },
+    furniture: { shop: ["furniture"] },
+    coffee: { amenity: ["cafe"] },
     mercearia: { shop: ["convenience", "greengrocer"] },
     acougue: { shop: ["butcher"] },
     "açougue": { shop: ["butcher"] },
@@ -141,6 +170,10 @@ function montarFiltrosOverpass(segmento, bbox, areaId = null, timeout = 25) {
 
     if (mapa) {
         for (const [chave, valores] of Object.entries(mapa)) {
+            if (valores.includes("*")) {
+                blocos.push(`nwr["${chave}"]["name"]${recorte};`);
+                continue;
+            }
             const lista = valores.map(escaparRegex).join("|");
             blocos.push(`nwr["${chave}"~"^(${lista})$"]["name"]${recorte};`);
         }
