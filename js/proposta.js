@@ -56,6 +56,15 @@ function numeroWhatsApp(item) {
     return digitos.length >= 10 && digitos.length <= 15 ? digitos : null;
 }
 
+function atualizarEstadoWhatsApp(item) {
+    if (!botaoWhatsApp) return;
+    const incerto = !numeroWhatsApp(item);
+    botaoWhatsApp.classList.toggle("whatsapp-incerto", incerto);
+    botaoWhatsApp.title = incerto
+        ? "A busca não confirmou um WhatsApp. Confira o número antes de enviar."
+        : "Abrir conversa no WhatsApp";
+}
+
 function normalizarTexto(valor) {
     return String(valor || "")
         .normalize("NFD")
@@ -65,6 +74,7 @@ function normalizarTexto(valor) {
 
 function escolherTemplate(item) {
     const termo = normalizarTexto(`${item.segmento || ""} ${item.categoria || ""}`);
+    if (/floricultura|florist|flowershop|flower_shop/.test(termo)) return "floricultura.html";
     if (/hortifruti|hortifrutis|sacolao|fruteira|greengrocer|produce|fruit_and_vegetables/.test(termo)) {
         return "hortifruti.html";
     }
@@ -174,7 +184,8 @@ function preencherEmpresa(item) {
     }
     const numero = numeroWhatsApp(item);
     localStorage.setItem("whatsapp", numero || "");
-    setDisabled(botaoWhatsApp, !numero);
+    setDisabled(botaoWhatsApp, false);
+    atualizarEstadoWhatsApp(item);
     setDisabled(botaoPreview, false);
 }
 
@@ -210,6 +221,7 @@ function carregar() {
     }
 
     preencherEmpresa(empresa);
+    setDisabled(botaoWhatsApp, false);
 }
 
 on(botaoGerar, "click", () => {
@@ -217,7 +229,8 @@ on(botaoGerar, "click", () => {
         return;
     }
     mensagemEl.value = mensagemComLink(empresa);
-    setDisabled(botaoWhatsApp, !numeroWhatsApp(empresa));
+    setDisabled(botaoWhatsApp, false);
+    atualizarEstadoWhatsApp(empresa);
 });
 
 on(botaoWhatsApp, "click", () => {
@@ -225,8 +238,13 @@ on(botaoWhatsApp, "click", () => {
         return;
     }
 
-    const numero = numeroWhatsApp(empresa);
-    if (!numero) {
+    let numero = numeroWhatsApp(empresa) ||
+        String(empresa.telefoneNormalizado || empresa.telefone || "").replace(/\D/g, "");
+    if (numero.length < 10 || numero.length > 15) {
+        numero = String(window.prompt("WhatsApp não encontrado. Digite o número com DDD:") || "").replace(/\D/g, "");
+    }
+    if (numero.length < 10 || numero.length > 15) {
+        window.alert("Informe um número válido com DDD para abrir o WhatsApp.");
         return;
     }
 
