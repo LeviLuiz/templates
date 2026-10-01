@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const cacheCidades = new Map();
+const cacheLocais = new Map();
 const OVERPASS_ENDPOINTS = [
     "https://overpass.openstreetmap.fr/api/interpreter",
     "https://overpass.osm.ch/api/interpreter",
@@ -53,6 +53,16 @@ const SEGMENTOS = {
     contabilidade: { office: ["accountant"] },
     imobiliaria: { office: ["estate_agent"] },
     "imobiliária": { office: ["estate_agent"] },
+};
+
+const SIGLAS_ESTADOS = {
+    ac: "Acre", al: "Alagoas", ap: "Amapá", am: "Amazonas", ba: "Bahia",
+    ce: "Ceará", df: "Distrito Federal", es: "Espírito Santo", go: "Goiás",
+    ma: "Maranhão", mt: "Mato Grosso", ms: "Mato Grosso do Sul", mg: "Minas Gerais",
+    pa: "Pará", pb: "Paraíba", pr: "Paraná", pe: "Pernambuco", pi: "Piauí",
+    rj: "Rio de Janeiro", rn: "Rio Grande do Norte", rs: "Rio Grande do Sul",
+    ro: "Rondônia", rr: "Roraima", sc: "Santa Catarina", sp: "São Paulo",
+    se: "Sergipe", to: "Tocantins",
 };
 
 const AMENITIES_COMERCIAIS = new Set([
@@ -120,29 +130,33 @@ function mapaDoSegmento(segmento) {
     return SEGMENTOS[original] || SEGMENTOS[semAcento] || null;
 }
 
-function montarFiltrosOverpass(segmento, bbox) {
+function montarFiltrosOverpass(segmento, bbox, areaId = null, timeout = 25) {
     const [latMin, lonMin, latMax, lonMax] = bbox;
-    const area = `${latMin},${lonMin},${latMax},${lonMax}`;
+    const recorte = areaId ? "(area.busca)" : `(${latMin},${lonMin},${latMax},${lonMax})`;
+    const prepararArea = areaId
+        ? `rel(${areaId})->.limite;\n.limite map_to_area->.busca;`
+        : "";
     const mapa = mapaDoSegmento(segmento);
     const blocos = [];
 
     if (mapa) {
         for (const [chave, valores] of Object.entries(mapa)) {
             const lista = valores.map(escaparRegex).join("|");
-            blocos.push(`nwr["${chave}"~"^(${lista})$"]["name"](${area});`);
+            blocos.push(`nwr["${chave}"~"^(${lista})$"]["name"]${recorte};`);
         }
     } else {
         const termo = escaparRegex(segmento);
         blocos.push(
-            `nwr["shop"]["name"~"${termo}",i](${area});`,
-            `nwr["craft"]["name"~"${termo}",i](${area});`,
-            `nwr["office"]["name"~"${termo}",i](${area});`,
-            `nwr["amenity"~"restaurant|fast_food|cafe|bar|pub|pharmacy|clinic|dentist"]["name"~"${termo}",i](${area});`,
+            `nwr["shop"]["name"~"${termo}",i]${recorte};`,
+            `nwr["craft"]["name"~"${termo}",i]${recorte};`,
+            `nwr["office"]["name"~"${termo}",i]${recorte};`,
+            `nwr["amenity"~"restaurant|fast_food|cafe|bar|pub|pharmacy|clinic|dentist"]["name"~"${termo}",i]${recorte};`,
         );
     }
 
     return `
-[out:json][timeout:25];
+[out:json][timeout:${timeout}];
+${prepararArea}
 (
 ${blocos.join("\n")}
 );
@@ -150,21 +164,33 @@ out center tags;
 `.trim();
 }
 
-async function geocodificarCidade(cidade) {
-    const chave = cidade.toLowerCase();
-    if (cacheCidades.has(chave)) {
-        return cacheCidades.get(chave);
+async function geocodificarLocal(localInformado) {
+    const chave = localInformado.toLocaleLowerCase("pt-BR").trim();
+    if (cacheLocais.has(chave)) {
+        return cacheLocais.get(chave);
+    }
+
+    const sigla = chave.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const estado = SIGLAS_ESTADOS[sigla]
+        || Object.values(SIGLAS_ESTADOS).find((nome) => chaveSegmento(nome) === sigla)
+        || null;
+    const parametros = {
+        format: "json",
+        limit: 1,
+        addressdetails: 1,
+        countrycodes: "br",
+    };
+    if (estado) {
+        parametros.state = estado;
+        parametros.country = "Brasil";
+    } else {
+        parametros.q = `${localInformado}, Brasil`;
     }
 
     const resposta = await axios.get(
         "https://nominatim.openstreetmap.org/search",
         {
-            params: {
-                q: `${cidade}, Brasil`,
-                format: "json",
-                limit: 1,
-                addressdetails: 1,
-            },
+            params: parametros,
             headers: {
                 "User-Agent": "prospeccao-sites/1.0 (contato local)",
             },
@@ -178,19 +204,27 @@ async function geocodificarCidade(cidade) {
 
     const local = resposta.data[0];
     const boundingbox = local.boundingbox.map(Number);
+    const tipoLocal = estado ? "state" : local.addresstype || local.type || "local";
+    const areaId = local.osm_type === "relation"
+        && /^(state|city|town|village|municipality|county)$/i.test(tipoLocal)
+        && /^\d+$/.test(String(local.osm_id))
+        ? Number(local.osm_id)
+        : null;
     const resultado = {
         nome: local.display_name,
+        tipo: tipoLocal,
+        areaId,
         latitudeMin: boundingbox[0],
         latitudeMax: boundingbox[1],
         longitudeMin: boundingbox[2],
         longitudeMax: boundingbox[3],
     };
 
-    cacheCidades.set(chave, resultado);
+    cacheLocais.set(chave, resultado);
     return resultado;
 }
 
-async function consultarOverpass(consulta) {
+async function consultarOverpass(consulta, timeoutMs = 16000) {
     let ultimoErro = null;
     // Tente no máximo dois espelhos por busca e alterne o primeiro para evitar
     // que uma indisponibilidade do espelho principal imponha até 112 s de espera.
@@ -206,7 +240,7 @@ async function consultarOverpass(consulta) {
                         "Content-Type": "application/x-www-form-urlencoded",
                         "User-Agent": "prospeccao-sites/1.0 (contato local)",
                     },
-                    timeout: 16000,
+                    timeout: timeoutMs,
                 },
             );
 
@@ -446,15 +480,15 @@ function transformarElemento(elemento, segmento) {
 async function buscarEmpresas(req, res) {
     try {
         const segmento = req.query.segmento?.trim();
-        const cidade = req.query.cidade?.trim();
+        const localInformado = (req.query.local || req.query.cidade)?.trim();
 
-        if (!segmento || !cidade) {
+        if (!segmento || !localInformado) {
             return res.status(400).json({
-                erro: "Informe segmento e cidade.",
+                erro: "Informe segmento e cidade ou estado.",
             });
         }
 
-        const local = await geocodificarCidade(cidade);
+        const local = await geocodificarLocal(localInformado);
         if (!local) {
             return res.status(404).json({
                 erro: "Cidade não encontrada.",
@@ -466,11 +500,11 @@ async function buscarEmpresas(req, res) {
             local.longitudeMin,
             local.latitudeMax,
             local.longitudeMax,
-        ]);
+        ], local.areaId, local.tipo === "state" ? 40 : 25);
 
         let elementos;
         try {
-            elementos = await consultarOverpass(consulta);
+            elementos = await consultarOverpass(consulta, local.tipo === "state" ? 45000 : 16000);
         } catch (erro) {
             console.error("Overpass falhou:", erro.causa?.code || erro.message);
             return res.status(503).json({
@@ -514,7 +548,7 @@ async function buscarEmpresas(req, res) {
 
 module.exports = {
     buscarEmpresas,
-    geocodificarCidade,
+    geocodificarLocal,
     montarFiltrosOverpass,
     transformarElemento,
 };
