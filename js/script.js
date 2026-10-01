@@ -39,10 +39,10 @@ function enviarSeEnter(evento) {
 
 async function buscarEmpresas() {
     const segmento = segmentoInput.value.trim();
-    const cidade = cidadeInput.value.trim();
+    const local = cidadeInput.value.trim();
 
-    if (!segmento || !cidade) {
-        statusEl.textContent = "Informe o segmento e a cidade.";
+    if (!segmento || !local) {
+        statusEl.textContent = "Informe o segmento e a cidade ou estado.";
         return;
     }
 
@@ -55,7 +55,7 @@ async function buscarEmpresas() {
     botaoProximo.disabled = true;
 
     try {
-        const url = `/buscar?segmento=${encodeURIComponent(segmento)}&cidade=${encodeURIComponent(cidade)}`;
+        const url = `/buscar?segmento=${encodeURIComponent(segmento)}&local=${encodeURIComponent(local)}`;
         const resposta = await fetch(url);
         const dados = await resposta.json();
 
@@ -169,11 +169,14 @@ function aceitarEmpresa() {
     localStorage.setItem("filaProspeccao", JSON.stringify(empresas));
     localStorage.setItem("indiceProspeccao", String(indiceAtual));
     localStorage.setItem("empresaProposta", JSON.stringify(empresa));
+    const whatsapp = empresa.whatsapp || empresa.celular || "";
+    localStorage.setItem("whatsapp", String(whatsapp).replace(/\D/g, ""));
     window.location.href = "proposta.html";
 }
 
 function pularEmpresa() {
     proximaEmpresa();
+    localStorage.removeItem("whatsapp");
 }
 
 function montarMensagem(empresa) {
@@ -287,5 +290,5 @@ function continuarFilaSalva() {
 }
 
 if (!continuarFilaSalva()) {
-    statusEl.textContent = "Informe o segmento e a cidade.";
+    statusEl.textContent = "Informe o segmento e a cidade ou estado.";
 }
