@@ -51,7 +51,9 @@ function numeroWhatsApp(item) {
     if (!item) {
         return null;
     }
-    return item.celular || item.whatsapp || item.telefoneNormalizado || null;
+    const numero = item.celular || item.whatsapp;
+    const digitos = String(numero || "").replace(/\D/g, "");
+    return digitos.length >= 10 && digitos.length <= 15 ? digitos : null;
 }
 
 function normalizarTexto(valor) {
@@ -63,6 +65,12 @@ function normalizarTexto(valor) {
 
 function escolherTemplate(item) {
     const termo = normalizarTexto(`${item.segmento || ""} ${item.categoria || ""}`);
+    if (/hortifruti|hortifrutis|sacolao|fruteira|greengrocer|produce|fruit_and_vegetables/.test(termo)) {
+        return "hortifruti.html";
+    }
+    if (/supermercado|mercado|supermarket|convenience/.test(termo)) {
+        return "supermercado.html";
+    }
     if (/padaria|bakery|confeitaria|pastry/.test(termo)) return "padaria.html";
     if (/salao|barbearia|hairdresser|beauty/.test(termo)) return "salao.html";
     if (/oficina|mecanica|autopecas|car_repair|motorcycle_repair|car_parts/.test(termo)) return "oficina.html";
@@ -164,7 +172,9 @@ function preencherEmpresa(item) {
     if (mensagemEl) {
         mensagemEl.value = mensagemComLink(item);
     }
-    setDisabled(botaoWhatsApp, !numeroWhatsApp(item));
+    const numero = numeroWhatsApp(item);
+    localStorage.setItem("whatsapp", numero || "");
+    setDisabled(botaoWhatsApp, !numero);
     setDisabled(botaoPreview, false);
 }
 
@@ -190,6 +200,13 @@ function carregar() {
         setDisabled(botaoPreview, true);
         setDisabled(botaoProxima, true);
         return;
+    }
+
+    if (!numeroWhatsApp(empresa)) {
+        const salvo = String(localStorage.getItem("whatsapp") || "").replace(/\D/g, "");
+        if (salvo.length >= 10 && salvo.length <= 15) {
+            empresa.whatsapp = salvo;
+        }
     }
 
     preencherEmpresa(empresa);

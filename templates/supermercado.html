@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-campo="nome">Supermercado</title>
+    <style>
+        :root { --bg:#f2f7ef; --ink:#183323; --accent:#287447; --lime:#d5ed83; --card:#fff; }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:Arial,Helvetica,sans-serif; background:var(--bg); color:var(--ink); }
+        header { padding:22px 8%; display:flex; justify-content:space-between; align-items:center; gap:18px; }
+        .logo { font-size:20px; font-weight:800; }
+        .hero { padding:48px 8% 64px; display:grid; grid-template-columns:1.15fr .85fr; gap:28px; align-items:center; background:linear-gradient(135deg,#e4f1d9,#f2f7ef 70%); }
+        .selo { display:inline-block; padding:8px 12px; border-radius:999px; background:var(--lime); color:var(--ink); font-size:13px; font-weight:700; }
+        h1 { margin:16px 0; max-width:650px; font-size:48px; line-height:1.08; }
+        .intro { max-width:520px; font-size:18px; line-height:1.6; color:#506556; }
+        .btn { display:inline-block; padding:14px 20px; border-radius:10px; background:var(--accent); color:white; text-decoration:none; font-weight:700; }
+        .card { padding:26px; border-radius:20px; background:var(--card); box-shadow:0 14px 36px #18332318; }
+        .card h2 { margin-top:0; }
+        .card p { line-height:1.6; }
+        section { padding:42px 8%; }
+        .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+        .item { min-height:150px; padding:22px; border-radius:16px; background:var(--card); }
+        .item strong { display:block; margin-bottom:9px; color:var(--accent); font-size:18px; }
+        .item p { margin:0; color:#5d6e61; line-height:1.5; }
+        .faixa { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:28px 8%; background:#183323; color:white; }
+        .faixa p { margin:6px 0 0; color:#d8e7d8; }
+        .faixa .btn { flex-shrink:0; background:var(--lime); color:var(--ink); }
+        footer { padding:26px 8%; color:#627267; font-size:14px; }
+        footer p { display:inline-block; margin-right:18px; }
+        a[data-mapa], footer a { color:var(--accent); }
+        @media (max-width:760px) { .hero,.grid { grid-template-columns:1fr; } h1 { font-size:36px; } .faixa { align-items:flex-start; flex-direction:column; } }
+    </style>
+</head>
+<body data-categoria="Supermercado" data-frase="Tudo para sua casa, pertinho de você.">
+    <header>
+        <div class="logo" data-campo="nome">Supermercado</div>
+        <a class="btn" data-whatsapp target="_blank">Fazer pedido</a>
+    </header>
+    <main>
+        <section class="hero">
+            <div>
+                <span class="selo">Praticidade para o dia a dia</span>
+                <p data-campo="categoria">Supermercado</p>
+                <h1 data-campo="frase">Tudo para sua casa, pertinho de você.</h1>
+                <p class="intro">Consulte ofertas, tire dúvidas e combine sua compra direto com a equipe.</p>
+                <a class="btn" data-whatsapp target="_blank">Chamar no WhatsApp</a>
+            </div>
+            <div class="card">
+                <h2>Visite a loja</h2>
+                <p><strong data-campo="nome">Supermercado</strong></p>
+                <p data-campo="endereco">Endereço</p>
+                <p data-campo="horario">Horário de atendimento</p>
+                <p><a data-mapa target="_blank">Ver no mapa</a></p>
+                <p><a data-tel></a></p>
+            </div>
+        </section>
+        <section>
+            <div class="grid">
+                <article class="item"><strong>Feira fresca</strong><p>Frutas, verduras e legumes para a semana.</p></article>
+                <article class="item"><strong>Variedade</strong><p>Mercearia, bebidas, limpeza e itens para sua casa.</p></article>
+                <article class="item"><strong>Compra fácil</strong><p>Peça informações e consulte disponibilidade pelo WhatsApp.</p></article>
+            </div>
+        </section>
+        <section class="faixa">
+            <div><strong>Precisa de alguma coisa?</strong><p>Fale com a equipe e faça sua consulta.</p></div>
+            <a class="btn" data-whatsapp target="_blank">Falar com a loja</a>
+        </section>
+    </main>
+    <footer><p data-campo="nome">Supermercado</p><a data-mapa target="_blank">Como chegar</a></footer>
+    <script src="_base.js"></script>
+</body>
+</html>
