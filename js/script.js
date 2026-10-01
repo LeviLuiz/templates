@@ -22,6 +22,9 @@ const DIAS_BLOQUEIO = 30;
 let empresas = [];
 let indiceAtual = 0;
 
+segmentoInput.value = localStorage.getItem("segmentoPesquisa") || "";
+cidadeInput.value = localStorage.getItem("localPesquisa") || "";
+
 botaoBuscar.addEventListener("click", buscarEmpresas);
 botaoNao.addEventListener("click", rejeitarEmpresa);
 botaoSim.addEventListener("click", aceitarEmpresa);
@@ -45,6 +48,9 @@ async function buscarEmpresas() {
         statusEl.textContent = "Informe o segmento e a cidade ou estado.";
         return;
     }
+
+    localStorage.setItem("segmentoPesquisa", segmento);
+    localStorage.setItem("localPesquisa", local);
 
     statusEl.textContent = "Buscando empresas...";
     contador.textContent = "";

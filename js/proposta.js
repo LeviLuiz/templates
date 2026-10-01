@@ -252,7 +252,7 @@ on(botaoProxima, "click", () => {
 
     const proxima = fila[indiceAtual];
     localStorage.setItem("empresaProposta", JSON.stringify(proxima));
-    preencherEmpresa(proxima);
+    window.location.href = "index.html";
 });
 
 carregar();
