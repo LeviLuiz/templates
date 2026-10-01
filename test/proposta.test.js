@@ -49,6 +49,9 @@ const exemplos = [
     ["salão", "hairdresser", "salao.html"],
     ["oficina", "car_repair", "oficina.html"],
     ["restaurante", "restaurant", "restaurante.html"],
+    ["supermercado", "supermarket", "supermercado.html"],
+    ["hortifruti", "greengrocer", "hortifruti.html"],
+    ["sacolão", "greengrocer", "hortifruti.html"],
     ["papelaria", "stationery", "loja.html"],
 ];
 
