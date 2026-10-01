@@ -269,6 +269,16 @@ textarea:focus {
     background: #20bd5a;
 }
 
+button.whatsapp-incerto {
+    background: #f2b544;
+    color: #241a05;
+    border: 1px solid #d99416;
+}
+
+button.whatsapp-incerto:hover:not(:disabled) {
+    background: #e5a622;
+}
+
 .btn-proximo {
     background: #151b28;
     color: white;
