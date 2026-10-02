@@ -16,6 +16,7 @@ function abrirProposta(empresa) {
         id,
         value: "",
         disabled: false,
+        classList: { toggle() {} },
         addEventListener(evento, callback) {
             handlers.set(`${id}:${evento}`, callback);
         },

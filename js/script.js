@@ -15,6 +15,7 @@ const empCategoria = document.getElementById("emp-categoria");
 const empEndereco = document.getElementById("emp-endereco");
 const empMotivo = document.getElementById("emp-motivo");
 const empContato = document.getElementById("emp-contato");
+const empWhatsApp = document.getElementById("emp-whatsapp");
 const empSite = document.getElementById("emp-site");
 
 const DIAS_BLOQUEIO = 30;
@@ -128,7 +129,7 @@ function mostrarEmpresa() {
     }
 
     const empresa = empresas[indiceAtual];
-    const telefone = empresa.celular || empresa.whatsapp || empresa.telefone || "Telefone não informado";
+    const telefone = empresa.telefoneEncontrado || empresa.telefone || empresa.celular || empresa.whatsapp || "Telefone n\u00e3o informado";
 
     contador.textContent = `${indiceAtual + 1} de ${empresas.length}`;
     empNome.textContent = empresa.nome || "Nome não informado";
@@ -136,7 +137,14 @@ function mostrarEmpresa() {
     empCategoria.textContent = empresa.categoria || "Categoria não informada";
     empEndereco.textContent = empresa.endereco || "Endereço não informado";
     empMotivo.textContent = textoMotivo(empresa);
-    empContato.textContent = telefone;
+    empContato.textContent = `Telefone: ${telefone}`;
+    delete botaoEnviar.dataset.status;
+    if (empWhatsApp) {
+        empWhatsApp.textContent = "WhatsApp: Verificando...";
+        empWhatsApp.className = "whatsapp-status";
+        empWhatsApp.dataset.status = "verificando";
+    }
+    validarWhatsApp(empresa);
 
     if (empresa.site) {
         empSite.innerHTML = "";
@@ -154,7 +162,45 @@ function mostrarEmpresa() {
     botaoNao.disabled = false;
     botaoSim.disabled = false;
     botaoProximo.disabled = false;
-    botaoEnviar.disabled = !empresa.podeEnviar;
+    botaoEnviar.disabled = !obterNumeroWhatsApp(empresa);
+}
+
+async function validarWhatsApp(empresa) {
+    if (!empWhatsApp) return;
+    const numero = empresa.telefoneWhatsApp;
+    if (!numero) {
+        empWhatsApp.textContent = "WhatsApp: N\u00c3O FOI POSS\u00cdVEL VERIFICAR";
+        empWhatsApp.dataset.status = "unknown";
+        return;
+    }
+
+    try {
+        const resposta = await fetch("/whatsapp/validar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ telefone: numero }),
+        });
+        const resultado = await resposta.json();
+        if (empresas[indiceAtual] !== empresa) return;
+
+        if (resultado.status === "yes" && resultado.exists === true) {
+            empWhatsApp.textContent = "WhatsApp: SIM";
+            empWhatsApp.dataset.status = "yes";
+            botaoEnviar.dataset.status = "yes";
+        } else if (resultado.status === "no" && resultado.exists === false) {
+            empWhatsApp.textContent = "WhatsApp: N\u00c3O";
+            empWhatsApp.dataset.status = "no";
+            botaoEnviar.dataset.status = "no";
+        } else {
+            //empWhatsApp.textContent = "WhatsApp: N\u00c3O FOI POSS\u00cdVEL VERIFICAR";
+            empWhatsApp.textContent = "WhatsApp: Não foi possível verificar";
+            empWhatsApp.dataset.status = "unknown";
+        }
+    } catch {
+        if (empresas[indiceAtual] !== empresa) return;
+        empWhatsApp.textContent = "WhatsApp: N\u00c3O FOI POSS\u00cdVEL VERIFICAR";
+        empWhatsApp.dataset.status = "unknown";
+    }
 }
 
 function rejeitarEmpresa() {
@@ -204,14 +250,18 @@ function enviarWhatsApp() {
         return;
     }
 
-    const numero = empresa.celular || empresa.whatsapp || empresa.telefoneNormalizado;
+    const numero = obterNumeroWhatsApp(empresa);
     if (!numero) {
         statusEl.textContent = "Essa empresa não tem celular para WhatsApp.";
         return;
     }
 
-    const url = `https://wa.me/${numero}?text=${encodeURIComponent(montarMensagem(empresa))}`;
+    const url = `https://wa.me/${numero.replace(/\D/g, "")}?text=${encodeURIComponent(montarMensagem(empresa))}`;
     window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function obterNumeroWhatsApp(empresa) {
+    return empresa.telefoneWhatsApp || empresa.celular || empresa.whatsapp || empresa.telefoneNormalizado || null;
 }
 
 function proximaEmpresa() {

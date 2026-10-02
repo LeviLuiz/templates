@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { normalizarTelefoneWhatsAppBR } = require("./whatsapp-validation");
 
 const cacheLocais = new Map();
 const OVERPASS_ENDPOINTS = [
@@ -461,6 +462,8 @@ function transformarElemento(elemento, segmento) {
     const whatsapp = normalizarTelefoneBR(whatsappBruto);
     const celular = normalizarTelefoneBR(celularBruto);
     const telefone = normalizarTelefoneBR(telefoneBruto);
+    const telefoneEncontrado = whatsappBruto || celularBruto || telefoneBruto || null;
+    const telefoneWhatsApp = normalizarTelefoneWhatsAppBR(telefoneEncontrado);
     const melhorNumero = whatsapp || celular || telefone;
     const temCelular = ehCelularBR(melhorNumero);
 
@@ -491,6 +494,8 @@ function transformarElemento(elemento, segmento) {
         osm_tipo: elemento.type,
         site,
         telefone: telefoneBruto || null,
+        telefoneEncontrado,
+        telefoneWhatsApp,
         telefoneNormalizado: melhorNumero,
         celular: temCelular ? melhorNumero : null,
         whatsapp: whatsapp || (temCelular ? melhorNumero : null),

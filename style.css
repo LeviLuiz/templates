@@ -269,6 +269,19 @@ textarea:focus {
     background: #20bd5a;
 }
 
+.btn-enviar[data-status="no"] {
+    background: #f2b544;
+    color: #241a05;
+}
+
+.btn-enviar[data-status="no"]:hover:not(:disabled) {
+    background: #e5a622;
+}
+
+.whatsapp-status[data-status="yes"] { color: #25d366; }
+.whatsapp-status[data-status="no"] { color: #ff7777; }
+.whatsapp-status[data-status="unknown"] { color: #f2b544; }
+
 button.whatsapp-incerto {
     background: #f2b544;
     color: #241a05;
@@ -277,6 +290,16 @@ button.whatsapp-incerto {
 
 button.whatsapp-incerto:hover:not(:disabled) {
     background: #e5a622;
+}
+
+#whatsapp[data-status="yes"] {
+    background: #25d366;
+    color: white;
+}
+
+#whatsapp[data-status="no"] {
+    background: #f2b544;
+    color: #241a05;
 }
 
 .btn-proximo {

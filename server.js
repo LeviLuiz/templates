@@ -3,12 +3,14 @@ const dotenv = require("dotenv");
 const axios = require("axios");
 const path = require("path");
 const { buscarEmpresas } = require("./buscar-e-avaliar");
+const whatsappValidation = require("./whatsapp-validation");
 
 dotenv.config();
 
 const app = express();
 const PORT = 3000;
 
+app.use(express.json({ limit: "2kb" }));
 app.use(express.static(path.join(__dirname)));
 
 app.get("/geocodificar", async (req, res) => {
@@ -62,6 +64,26 @@ app.get("/geocodificar", async (req, res) => {
 
 app.get("/buscar", buscarEmpresas);
 
+app.get("/whatsapp/status", (_req, res) => {
+    res.json(whatsappValidation.obterEstado());
+});
+
+app.post("/whatsapp/validar", async (req, res) => {
+    const enderecoRemoto = req.socket.remoteAddress;
+    if (!new Set(["127.0.0.1", "::1", "::ffff:127.0.0.1"]).has(enderecoRemoto)) {
+        return res.status(403).json({ exists: null, status: "unknown" });
+    }
+
+    const numero = whatsappValidation.normalizarTelefoneWhatsAppBR(req.body?.telefone);
+    if (!numero) {
+        return res.status(400).json({ exists: null, status: "unknown" });
+    }
+
+    const resultado = await whatsappValidation.validarTelefone(numero);
+    res.json(resultado);
+});
+
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
+    whatsappValidation.iniciarConexao();
 });

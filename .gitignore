@@ -6,6 +6,9 @@ node_modules/
 .env.*
 !.env.example
 
+# Sessão local do WhatsApp/Baileys (credenciais e chaves de autenticação)
+.baileys_auth/
+
 # Logs e arquivos temporários
 *.log
 npm-debug.log*

@@ -51,7 +51,7 @@ function numeroWhatsApp(item) {
     if (!item) {
         return null;
     }
-    const numero = item.celular || item.whatsapp;
+    const numero = item.telefoneWhatsApp || item.celular || item.whatsapp || item.telefoneNormalizado || item.telefone;
     const digitos = String(numero || "").replace(/\D/g, "");
     return digitos.length >= 10 && digitos.length <= 15 ? digitos : null;
 }
@@ -60,9 +60,33 @@ function atualizarEstadoWhatsApp(item) {
     if (!botaoWhatsApp) return;
     const incerto = !numeroWhatsApp(item);
     botaoWhatsApp.classList.toggle("whatsapp-incerto", incerto);
+    if (botaoWhatsApp.dataset) delete botaoWhatsApp.dataset.status;
     botaoWhatsApp.title = incerto
         ? "A busca não confirmou um WhatsApp. Confira o número antes de enviar."
         : "Abrir conversa no WhatsApp";
+}
+
+async function validarWhatsApp(item) {
+    const numero = item.telefoneWhatsApp || numeroWhatsApp(item);
+    if (!numero || !botaoWhatsApp) return;
+
+    try {
+        const resposta = await fetch("/whatsapp/validar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ telefone: numero }),
+        });
+        const resultado = await resposta.json();
+        if (empresa !== item) return;
+
+        if (resultado.status === "yes" && resultado.exists === true) {
+            botaoWhatsApp.dataset.status = "yes";
+        } else if (resultado.status === "no" && resultado.exists === false) {
+            botaoWhatsApp.dataset.status = "no";
+        }
+    } catch {
+        // Falha na consulta nÃ£o altera o nÃºmero nem o estado atual do botÃ£o.
+    }
 }
 
 function normalizarTexto(valor) {
@@ -184,8 +208,9 @@ function preencherEmpresa(item) {
     }
     const numero = numeroWhatsApp(item);
     localStorage.setItem("whatsapp", numero || "");
-    setDisabled(botaoWhatsApp, false);
+    setDisabled(botaoWhatsApp, !numero);
     atualizarEstadoWhatsApp(item);
+    validarWhatsApp(item);
     setDisabled(botaoPreview, false);
 }
 
@@ -221,7 +246,7 @@ function carregar() {
     }
 
     preencherEmpresa(empresa);
-    setDisabled(botaoWhatsApp, false);
+    setDisabled(botaoWhatsApp, !numeroWhatsApp(empresa));
 }
 
 on(botaoGerar, "click", () => {
@@ -261,6 +286,7 @@ on(botaoPreview, "click", () => {
 on(botaoProxima, "click", () => {
     indiceAtual += 1;
     localStorage.setItem("indiceProspeccao", String(indiceAtual));
+    localStorage.setItem("whatsapp", "");
 
     if (indiceAtual >= fila.length) {
         localStorage.removeItem("empresaProposta");
@@ -270,6 +296,7 @@ on(botaoProxima, "click", () => {
 
     const proxima = fila[indiceAtual];
     localStorage.setItem("empresaProposta", JSON.stringify(proxima));
+    setDisabled(botaoWhatsApp, !numeroWhatsApp(proxima));
     window.location.href = "index.html";
 });
 

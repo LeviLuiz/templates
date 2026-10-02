@@ -19,6 +19,7 @@ function criarStorage(valores = {}) {
 function elemento(id, handlers) {
     return {
         id,
+        classList: { toggle() {} },
         value: id === "segmento" ? "restaurante" : id === "cidade" ? "São Paulo" : "",
         textContent: "",
         hidden: false,
@@ -32,7 +33,7 @@ test("script.js salva o telefone WhatsApp como número, não como true/false", a
     const handlers = new Map();
     const ids = ["buscar", "segmento", "cidade", "status", "contador", "empresa-atual", "nao", "sim", "enviar", "proxima", "emp-nome", "emp-nota", "emp-categoria", "emp-endereco", "emp-motivo", "emp-contato", "emp-site"];
     const elementos = Object.fromEntries(ids.map((id) => [id, elemento(id, handlers)]));
-    const storage = criarStorage();
+    const storage = criarStorage({ segmentoPesquisa: "restaurante", localPesquisa: "S\u00e3o Paulo" });
     const empresa = {
         nome: "Restaurante Central",
         whatsapp: "5511912345678",
